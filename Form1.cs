@@ -23,13 +23,12 @@ namespace Raytracer
             MouseDown += Form1MouseDown;
 
             // TODO:
+            // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Create quad primitive object
             // Create cube object using mesh object
             // Create inverse cube object
-            // Add to github
             // Add transparant surfaces
             // Add simple scene file format - JSON
-            // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Add scene viewer & editor
             // Reflection of reflection not working (flipped)
             // Infinite reflection fix
@@ -45,39 +44,15 @@ namespace Raytracer
             //Raytracer raytracer = new Raytracer(7680, 4320);
 
             raytracer.Camera.Position = new Vector3d(5f, 5f, 2f);
-            //raytracer.Camera.Position = new Vector3d(9.5f, 16f, 0f);
-            //raytracer.Camera.Direction = new Vector3d(1f, 0f, 0f);
             raytracer.Camera.LookAt(new Vector3d(10f, 2f, 0f));
-            //raytracer.Camera.FocusOn(new Vector3d(10f, 2f, 0f));
 
             Vector3d focalPoint = raytracer.Camera.Position + raytracer.Camera.GetRayDirection(1024/2, 768/2) * raytracer.Camera.FocalLength;
-
-            //raytracer.Camera.Position = new Vector3d(1f, 2f, 0f);
-            //raytracer.Camera.Direction = new Vector3d(1f, 0f, 0f);
-
-            /*
-            raytracer.Camera.Position = new Vector3d(40f, 5f, 15f);
-            //raytracer.Camera.Direction = new Vector3d(f, 0f, 0f);
-            raytracer.Camera.LookAt(new Vector3d(15f, 5f, 0f));
-
-            raytracer.Camera.Position += raytracer.Camera.Direction * 16f;
-            */
-
-            //raytracer.Camera.GetRayDirection(0, 0);
-            //raytracer.Camera.GetRayDirection(0, 0);
-            //raytracer.Camera.GetRayDirection(960, 540);
-            //raytracer.Camera.GetRayDirection(1920, 0);
-            //raytracer.Camera.GetRayDirection(0, 1080);
-            //raytracer.Camera.GetRayDirection(1920, 1080);
-
-            //raytracer.Camera.GetRayDirection(10, 55);
 
             Material redMaterial = new Material();
             redMaterial.Color = new Color3f(Color.Red);
 
             Material greenMaterial = new Material();
             greenMaterial.Color = new Color3f(Color.Green);
-            //greenMaterial.Reflection = 0.5f;
 
             Material blueMaterial = new Material();
             blueMaterial.Color = new Color3f(Color.LightBlue);
@@ -133,18 +108,12 @@ namespace Raytracer
                 testMaterials.Add(material);
             }
 
-            //Material bitmapMaterial = new Material();
-            //bitmapMaterial.Texture = new BitmapTexture(@"C:\Dev\raytracer\texture.jpg");
-
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
             ////raytracer.Scene.Objects.Add(new CubeObject("CUBE_MIDDLE", new Vector3d(10f, 2f, 0f), 2f, testMaterials));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_LEFT",     new Vector3d(10f, 2f, -3f), 1f, blueMaterial));
 
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_FOCUS", raytracer.Camera.Position + raytracer.Camera.Direction * raytracer.Camera.FocalLength, 0.3f, reflectiveMaterial));
-
-            //raytracer.Scene.Objects.Add(new TriangleObject("RECTANGLE_TRIANGLE_1", new Vertex(new Vector3d(13f, 1f, -5f), new Vector2d(0f, 0f)), new Vertex(new Vector3d(13f, 1f, 5f), new Vector2d(1f, 0f)), new Vertex(new Vector3d(13f, 8f, 5f), new Vector2d(1f, 1f)), checkerMaterial));
-            //raytracer.Scene.Objects.Add(new TriangleObject("RECTANGLE_TRIANGLE_2", new Vertex(13f, 8f, 5f), new Vertex(13f, 8f, -5f), new Vertex(13f, 1f, -5f), checkerMaterial));
 
             raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_1", new Vertex(12f, 1f, -10f, 0f, 1f), new Vertex(12f, 1f, 10f, 1f, 1f), new Vertex(12f, 16f, 10f, 1f, 0f), backgroundMaterial1));
             raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_2", new Vertex(12f, 16f, 10f, 1f, 0f), new Vertex(12f, 16f, -10f, 0f, 0f), new Vertex(12f, 1f, -10f, 0f, 1f), backgroundMaterial1));
@@ -163,102 +132,11 @@ namespace Raytracer
 
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(9d, 1, -3d)));
 
-            //raytracer.Scene.Lights.Add(new DirectonalLight(new Color3f(1f, 1f, 1f), (new Vector3d(1f, -1f, 0f)).Normalize()));
-
-            //raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(8f, 4f, 0f)));
-            //raytracer.Scene.Lights.Add(new PointLight(new Vector3d(10f, 5f, 0f)));
-            //raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(12f, 4f, 0f)));
-
-            //raytracer.Scene.Objects.Add(new TriangleObject("SHADOW_TRIANGLE", new Vertex(9.75f, 4f, -.25f), new Vertex(9.75f, 4f, .25f), new Vertex(10.25f, 4f, .25f), redMaterial));
-
-            //raytracer.Scene.Objects.AddRange(raytracer.Scene.Lights);
-
-            /*
-            Material skyMaterial = new Material();
-            skyMaterial.Color = Color.LightBlue;
-            skyMaterial.Texture = new BitmapTexture(@"C:\Dev\raytracer\clouds.jpg");
-            skyMaterial.InvertNormals = true;
-            skyMaterial.FullBright = true;
-
-            // TODO This kills the lights for the plane
-            //raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(0f, 0f, 0f), 50f, skyMaterial));
-
-            Material redMaterial = new Material();
-            redMaterial.Color = Color.Red;
-
-            Material greenMaterial = new Material();
-            greenMaterial.Color = Color.Green;
-
-            Material reflectiveMaterial = new Material();
-            reflectiveMaterial.Reflective = true;
-
-            Material checkerMaterial = new Material();
-            checkerMaterial.Texture = new CheckerTexture(Color.Black, Color.Gray);
-
-            Material bitmapMaterial = new Material();
-            bitmapMaterial.Texture = new BitmapTexture(@"C:\Dev\raytracer\texture.jpg");
-
-            raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(25f, 10f, -5f), 2f, bitmapMaterial));
-            raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(25f, 10f, 0f), 2f, reflectiveMaterial));
-            raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(15f, 3f, 0f), 2f, reflectiveMaterial));
-            raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(25f, 10f, 5f), 2f, greenMaterial));
-            raytracer.Scene.Objects.Add(new SphereObject(new Vector3d(-5f, 15f, -5f), 3f, redMaterial));
-
-            raytracer.Scene.Objects.Add(new PlaneObject(new Vector3d(0f, 1f, 0f), new Vector3d(0f, 1f, 0f), checkerMaterial));
-
-            raytracer.Scene.Objects.Add(new TriangleObject(new Vertex(25f, 1f, -5f), new Vertex(25f, 1f, 5f), new Vertex(25f, 8f, 5f), redMaterial));
-
-            raytracer.Scene.Lights.Add(new PointLight(new Vector3d(20f, 30f, -5f)));
-            raytracer.Scene.Lights.Add(new PointLight(new Vector3d(20f, 0f, -5f)));
-            raytracer.Scene.Lights.Add(new PointLight(new Vector3d(1f, 1f, 1f)));
-            //raytracer.Scene.Lights.Add(new PointLight(new Vector3d(10f, 30f, 5f)));
-            */
-
-            //raytracer.Camera.Position = new Vector3d(6, 6f, 0f);
-            ////raytracer.Camera.Direction = (new Vector3d(0.1f, -0.9f, 0f)).Normalize();
-            //raytracer.Camera.Direction = (new Vector3d(1f, 0f, 0f)).Normalize();
-
-            //raytracer.Camera.Position = new Vector3d(12f, 5f, 2f);
-            //raytracer.Camera.Position = new Vector3d(9.5f, 16f, 0f);
-            //raytracer.Camera.Direction = new Vector3d(1f, 0f, 0f);
-            //raytracer.Camera.LookAt(new Vector3d(10f, 2f, 0f));
-
-
             raytracer.RenderProgress = new Rendering.Raytracer.ProgressDelegate(RaytracerProgressUpdate);
             raytracer.RenderComplete = new Rendering.Raytracer.RenderCompleteDelegate(RaytracerRenderComplete);
 
             Thread thread = new Thread(raytracer.Render);
             thread.Start();
-
-            //_raytracerOutput = raytracer.Render();
-
-            //AntiAliasingRenderer antiAliasingRenderer = new AntiAliasingRenderer(_raytracerOutput);
-            //_raytracerOutput = antiAliasingRenderer.Render(2);
-
-            //_raytracerOutput.Save(string.Format(@".\{0}.bmp", Environment.TickCount));
-
-/*
-            int startTick = Environment.TickCount;
-
-            for (int frame = 0; frame < 60; frame++)
-            {
-                _raytracerOutput = raytracer.Render();
-
-                AntiAliasingRenderer antiAliasingRenderer = new AntiAliasingRenderer(_raytracerOutput);
-                _raytracerOutput = antiAliasingRenderer.Render(2);
-
-                raytracer.Camera.Position.Z += .5f;// += raytracer.Camera.Direction * 2.0f;
-                //raytracer.Scene.Lights[0].Position.Z += 0.5f;
-
-                _raytracerOutput.Save(string.Format(@".\{0}.bmp", frame));
-            }
-
-            int endTick = Environment.TickCount;
-
-            double FPS = 60.0f / ((endTick - startTick) / 1000.0f);
-
-            MessageBox.Show(string.Format("FPS: {0}", FPS));
-            */
         }
 
         private void RaytracerProgressUpdate(float progress)
