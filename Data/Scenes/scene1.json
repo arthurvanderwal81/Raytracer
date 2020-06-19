@@ -1,0 +1,48 @@
+{
+  "camera": {
+    "position": {
+      "x": 1.0,
+      "y": 2.0,
+      "z": 0.0
+    },
+    "direction": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "fov": 90,
+    "focal_length": 1.1
+  }
+  "materials": [
+    {
+      "name": "material1",
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0,0
+      },
+      "texture": "c:\\dev\\raytracer\\textures\\1.jpg",
+      "reflection": 0.9
+    }
+  ],
+  "objects": [
+    {
+      "type": "sphere",
+      "material": "material1",
+      "position": {
+        "x": 1.0,
+        "y": 2.0,
+        "z": 3.0
+      },
+      "radius": 1.0
+    },
+    {
+      "type": "pointlight",
+      "position": {
+        "x": 1.0,
+        "y": 2.0,
+        "z": 3.0
+      }
+    }
+  ]
+}
