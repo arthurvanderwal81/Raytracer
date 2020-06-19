@@ -3,6 +3,7 @@
 using Raytracer.Math;
 using Raytracer.Objects;
 using Raytracer.Lights;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Rendering
 {
@@ -17,9 +18,9 @@ namespace Raytracer.Rendering
             Lights = new List<AbstractLight>();
         }
 
-        public IntersectionResult GetNearestObjectIntersection(Vector3d direction, Vector3d position, AbstractObject3d excludeObject = null)
+        public IIntersectionResult GetNearestObjectIntersection(Vector3d direction, Vector3d position, AbstractObject3d excludeObject = null)
         {
-            IntersectionResult intersectionResult = new IntersectionResult();
+            IIntersectionResult nearestIntersectionResult = null;
 
             foreach (AbstractObject3d o in Objects)
             {
@@ -28,6 +29,22 @@ namespace Raytracer.Rendering
                     continue;
                 }
 
+                IIntersectionResult intersectionResult = o.Intersection(direction, position);
+
+                if (intersectionResult != null)
+                {
+                    if (nearestIntersectionResult == null)
+                    {
+                        nearestIntersectionResult = intersectionResult;
+                    }
+                    else if (intersectionResult.IntersectionDistance < nearestIntersectionResult.IntersectionDistance)
+                    {
+                        nearestIntersectionResult = intersectionResult;
+                    }
+                }
+
+                /*
+                // TODO move this to o.Intersection (distance, setting of object, return intersectionresult)
                 Vector3d intersection = o.Intersection(direction, position);
 
                 if (intersection != null)
@@ -41,9 +58,10 @@ namespace Raytracer.Rendering
                         intersectionResult.Object = o;
                     }
                 }
+                */
             }
 
-            return intersectionResult;
+            return nearestIntersectionResult;
         }
     }
 }

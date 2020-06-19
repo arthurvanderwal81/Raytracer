@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 
 using Raytracer.Math;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Rendering
 {
@@ -104,13 +105,13 @@ namespace Raytracer.Rendering
                         //Vector3d raydirection = raytracerData.Camera.GetRayDirection(x, raytracerData.Y);
                         //Vector3d rayposition = raytracerData.Camera.Position;
 
-                        IntersectionResult intersectionResult = raytracerData.Scene.GetNearestObjectIntersection(rayDirection, pixelWorldSpace);
+                        IIntersectionResult intersectionResult = raytracerData.Scene.GetNearestObjectIntersection(rayDirection, pixelWorldSpace);
 
                         Color color = Color.Black;
 
-                        if (intersectionResult.Object != null)
+                        if (intersectionResult != null)
                         {
-                            color = intersectionResult.Object.GetColor(rayDirection, intersectionResult.Intersection, raytracerData.Scene);
+                            color = intersectionResult.Object.GetColor(rayDirection, intersectionResult, raytracerData.Scene);
                         }
 
                         averageColor.Add(color);
@@ -140,13 +141,13 @@ namespace Raytracer.Rendering
                 Vector3d raydirection = raytracerData.Camera.GetRayDirection(x, raytracerData.Y);
                 Vector3d rayposition = raytracerData.Camera.Position;
 
-                IntersectionResult intersectionResult = raytracerData.Scene.GetNearestObjectIntersection(raydirection, rayposition);
+                IIntersectionResult intersectionResult = raytracerData.Scene.GetNearestObjectIntersection(raydirection, rayposition);
 
                 Color color = Color.Black;
 
-                if (intersectionResult.Object != null)
+                if (intersectionResult != null)
                 {
-                    color = intersectionResult.Object.GetColor(raydirection, intersectionResult.Intersection, raytracerData.Scene);
+                    color = intersectionResult.Object.GetColor(raydirection, intersectionResult, raytracerData.Scene);
                 }
 
                 //result.SetPixel(x, y, color);
@@ -234,13 +235,13 @@ namespace Raytracer.Rendering
                     Vector3d raydirection = Camera.GetRayDirection(x, y);
                     Vector3d rayposition = Camera.Position;
 
-                    IntersectionResult intersectionResult = Scene.GetNearestObjectIntersection(raydirection, rayposition);
+                    IIntersectionResult intersectionResult = Scene.GetNearestObjectIntersection(raydirection, rayposition);
 
                     Color color = Color.Black;
 
                     if (intersectionResult.Object != null)
                     {
-                        color = intersectionResult.Object.GetColor(raydirection, intersectionResult.Intersection, Scene);
+                        color = intersectionResult.Object.GetColor(raydirection, intersectionResult, Scene);
                     }
 
                     //result.SetPixel(x, y, color);

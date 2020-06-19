@@ -23,9 +23,8 @@ namespace Raytracer
             MouseDown += Form1MouseDown;
 
             // TODO:
+            // CHECK ALL CUBE FACE NORMALS
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
-            // Create quad primitive object
-            // Create cube object using mesh object
             // Create inverse cube object
             // Add transparant surfaces
             // Add simple scene file format - JSON
@@ -39,7 +38,7 @@ namespace Raytracer
             this.ClientSize = new Size(1024, 768 + progressBar1.Height);
 
             //Raytracer raytracer = new Raytracer(this.ClientSize, false);
-            Rendering.Raytracer raytracer = new Rendering.Raytracer(1024, 768, false);
+            Rendering.Raytracer raytracer = new Rendering.Raytracer(1024, 768, true);
             //Raytracer raytracer = new Raytracer(3840, 2160);
             //Raytracer raytracer = new Raytracer(7680, 4320);
 
@@ -109,14 +108,16 @@ namespace Raytracer
             }
 
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
-            raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
-            ////raytracer.Scene.Objects.Add(new CubeObject("CUBE_MIDDLE", new Vector3d(10f, 2f, 0f), 2f, testMaterials));
+            //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
+            raytracer.Scene.Objects.Add(new CubeObject("CUBE_MIDDLE", new Vector3d(10f, 2f, 0f), 2f, testMaterials[5]));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_LEFT",     new Vector3d(10f, 2f, -3f), 1f, blueMaterial));
 
-            raytracer.Scene.Objects.Add(new SphereObject("SPHERE_FOCUS", raytracer.Camera.Position + raytracer.Camera.Direction * raytracer.Camera.FocalLength, 0.3f, reflectiveMaterial));
+            //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_FOCUS", raytracer.Camera.Position + raytracer.Camera.Direction * raytracer.Camera.FocalLength, 0.3f, reflectiveMaterial));
 
-            raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_1", new Vertex(12f, 1f, -10f, 0f, 1f), new Vertex(12f, 1f, 10f, 1f, 1f), new Vertex(12f, 16f, 10f, 1f, 0f), backgroundMaterial1));
-            raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_2", new Vertex(12f, 16f, 10f, 1f, 0f), new Vertex(12f, 16f, -10f, 0f, 0f), new Vertex(12f, 1f, -10f, 0f, 1f), backgroundMaterial1));
+            //raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_1", new Vertex(12f, 1f, -10f, 0f, 1f), new Vertex(12f, 1f, 10f, 1f, 1f), new Vertex(12f, 16f, 10f, 1f, 0f), backgroundMaterial1));
+            //raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_2", new Vertex(12f, 16f, 10f, 1f, 0f), new Vertex(12f, 16f, -10f, 0f, 0f), new Vertex(12f, 1f, -10f, 0f, 1f), backgroundMaterial1));
+
+            raytracer.Scene.Objects.Add(new QuadObject("VERTICAL_QUAD", new Vertex(12f, 1f, -10f, 0f, 1f), new Vertex(12f, 1f, 10f, 1f, 1f), new Vertex(12f, 16f, 10f, 1f, 0f), new Vertex(12f, 16f, -10f, 0f, 0f), backgroundMaterial1));
 
             //raytracer.Scene.Objects.Add(new TriangleObject("FLOOR_TRIANGLE_1", new Vertex(1f, 1f, -5f, 0f, 0f), new Vertex(1f, 1f, 5f, 2f, 0f), new Vertex(15f, 1f, 5f, 2f, 6f), checkerMaterial));
             //raytracer.Scene.Objects.Add(new TriangleObject("FLOOR_TRIANGLE_2", new Vertex(15f, 1f, 5f, 2f, 6f), new Vertex(15f, 1f, -5f, 0f, 6f), new Vertex(1f, 1f, -5f, 0f, 0f), checkerMaterial));
@@ -156,7 +157,7 @@ namespace Raytracer
         private void RaytracerRenderComplete(Bitmap result)
         {
             _raytracerOutput = result;
-            _raytracerOutput.Save(string.Format(@".\{0}.bmp", Environment.TickCount));
+            _raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
 
             //AntiAliasingRenderer antiAliasingRenderer = new AntiAliasingRenderer(_raytracerOutput);
             //_raytracerOutput = antiAliasingRenderer.Render(2);

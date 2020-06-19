@@ -4,6 +4,7 @@ using Raytracer.Math;
 using Raytracer.Lights;
 using Raytracer.Materials;
 using Raytracer.Rendering;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
@@ -12,29 +13,29 @@ namespace Raytracer.Objects
         public string Name { get; set; }
         public Material Material { get; set; }
 
-        protected abstract Vector3d GetNormal(Vector3d positionOnObject);
+        public abstract Vector3d GetNormal(IIntersectionResult intersectionResult);
 
-        protected abstract Vector2d GetUVCoordinates(Vector3d positionOnObject);
+        public abstract Vector2d GetUVCoordinates(IIntersectionResult intersectionResult);
 
-        public abstract Vector3d Intersection(Vector3d direction, Vector3d position);
+        public abstract IIntersectionResult Intersection(Vector3d direction, Vector3d position);
 
-        public virtual Color GetColor(Vector3d direction, Vector3d position, Scene scene)
+        public virtual Color GetColor(Vector3d direction, IIntersectionResult intersectionResult, Scene scene)
         {
             Color3f result = new Color3f();
 
-            Color3f surfaceColor = Material.Texture != null ? Material.Texture.GetColor(GetUVCoordinates(position), 0) : Material.Color;
+            Color3f surfaceColor = Material.Texture != null ? Material.Texture.GetColor(GetUVCoordinates(intersectionResult), 0) : Material.Color;
             Color3f reflectionColor = new Color3f();
 
             if (Material.Reflection > 0.0f)
             {
                 // Reflection
-                Vector3d reflectionVector = VectorHelpers.GetReflectionVector(direction, GetNormal(position));
+                Vector3d reflectionVector = VectorHelpers.GetReflectionVector(direction, GetNormal(intersectionResult));
 
-                IntersectionResult intersectionResult = scene.GetNearestObjectIntersection(reflectionVector, position, this);
+                IIntersectionResult reflectionIntersectionResult = scene.GetNearestObjectIntersection(reflectionVector, intersectionResult.Intersection, this);
 
-                if (intersectionResult.Object != null)
+                if (reflectionIntersectionResult != null)
                 {
-                    reflectionColor = new Color3f(intersectionResult.Object.GetColor(direction, intersectionResult.Intersection, scene));
+                    reflectionColor = new Color3f(intersectionResult.Object.GetColor(direction, reflectionIntersectionResult, scene));
                 }
             }
 
@@ -44,7 +45,7 @@ namespace Raytracer.Objects
 
                 if (light.Position != null)
                 {
-                    Vector3d lightDistanceVector = light.Position - position;
+                    Vector3d lightDistanceVector = light.Position - intersectionResult.Intersection;
                     double lightDistance = lightDistanceVector.Length();
 
                     foreach (AbstractObject3d o in scene.Objects)
@@ -54,20 +55,14 @@ namespace Raytracer.Objects
                             continue;
                         }
 
-                        if (o is AbstractLight)
+                        IIntersectionResult lightIntersectionResult = o.Intersection(Vector3d.Normalize(lightDistanceVector), intersectionResult.Intersection);
+
+                        if (lightIntersectionResult != null)
                         {
-                            continue;
-                        }
-
-                        Vector3d intersection = o.Intersection(Vector3d.Normalize(lightDistanceVector), position);
-
-                        if (intersection != null)
-                        {
-                            double intersectionDistance = (intersection - position).Length();
-
-                            if (intersectionDistance < lightDistance)
+                            if (lightIntersectionResult.IntersectionDistance < lightDistance)
                             {
                                 lightVisible = false;
+                                break;
                             }
                         }
                     }
@@ -78,10 +73,10 @@ namespace Raytracer.Objects
                     continue;
                 }
 
-                Vector3d normal = GetNormal(position);
-                Vector3d lightDirection = -light.GetDirection(position);
+                Vector3d normal = GetNormal(intersectionResult);
+                Vector3d lightDirection = -light.GetDirection(intersectionResult.Intersection);
 
-                double distanceSquared = light.GetDistance(position);
+                double distanceSquared = light.GetDistance(intersectionResult.Intersection);
                 distanceSquared *= distanceSquared;
 
                 double normalDotLightDirection = normal.Dot(lightDirection);

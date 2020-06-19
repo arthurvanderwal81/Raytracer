@@ -1,9 +1,9 @@
 ﻿using Raytracer.Math;
 using Raytracer.Objects;
 
-namespace Raytracer.Rendering
+namespace Raytracer.Rendering.Intersection
 {
-    public class IntersectionResult
+    public class IntersectionResult : IIntersectionResult
     {
         public double IntersectionDistance { get; set; }
         public Vector3d Intersection { get; set; }

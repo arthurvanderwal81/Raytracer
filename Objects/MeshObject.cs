@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Raytracer.Math;
 using Raytracer.Materials;
 using Raytracer.Rendering;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
@@ -24,44 +25,34 @@ namespace Raytracer.Objects
             _triangles = triangles;
         }
 
-        protected override Vector3d GetNormal(Vector3d positionOnObject)
+        public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
-            throw new System.NotImplementedException();
+            return (intersectionResult as MeshIntersectionResult).TriangleObject.GetNormal(intersectionResult);
         }
 
-        protected override Vector2d GetUVCoordinates(Vector3d positionOnObject)
+        public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
-            throw new System.NotImplementedException();
+            return (intersectionResult as MeshIntersectionResult).TriangleObject.GetUVCoordinates(intersectionResult);
         }
 
-        public override Vector3d Intersection(Vector3d direction, Vector3d position)
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             foreach (TriangleObject triangle in _triangles)
             {
-                Vector3d intersection = triangle.Intersection(direction, position);
+                IIntersectionResult intersectionResult = triangle.Intersection(direction, position);
 
-                if (intersection != null)
+                if (intersectionResult != null)
                 {
-                    return intersection;
+                    return new MeshIntersectionResult(intersectionResult, this);
                 }
             }
 
             return null;
         }
 
-        public override Color GetColor(Vector3d direction, Vector3d position, Scene scene)
+        public override Color GetColor(Vector3d direction, IIntersectionResult intersectionResult, Scene scene)
         {
-            foreach (TriangleObject triangle in _triangles)
-            {
-                Vector3d intersection = triangle.Intersection(direction, position);
-
-                if (intersection != null)
-                {
-                    return triangle.GetColor(direction, position, scene);
-                }
-            }
-
-            return Color.Black;
+            return (intersectionResult as MeshIntersectionResult).TriangleObject.GetColor(direction, intersectionResult, scene);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Raytracer.Math;
 using Raytracer.Materials;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
@@ -31,9 +32,9 @@ namespace Raytracer.Objects
             return spherePositionProjected;
         }
 
-        protected override Vector3d GetNormal(Vector3d positionOnSphere)
+        public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
-            Vector3d normal = positionOnSphere - _position;
+            Vector3d normal = intersectionResult.Intersection - _position;
 
             if (Material.InvertNormals)
             {
@@ -43,7 +44,7 @@ namespace Raytracer.Objects
             return normal.Normalize();
         }
 
-        public override Vector3d Intersection(Vector3d direction, Vector3d position)
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             Vector3d spherePositionProjected = ProjectSpherePosition(direction, position);
 
@@ -64,14 +65,20 @@ namespace Raytracer.Objects
             double i1 = ((_position - position).Dot(direction) - c);
             double i2 = ((_position - position).Dot(direction) + c);
 
-            return position + direction * i1;
+            IntersectionResult intersectionResult = new IntersectionResult();
+
+            intersectionResult.Intersection = position + direction * i1;
+            intersectionResult.IntersectionDistance = (intersectionResult.Intersection - position).Length();
+            intersectionResult.Object = this;
+
+            return intersectionResult;
         }
 
-        protected override Vector2d GetUVCoordinates(Vector3d position)
+        public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
-            Vector3d normal = GetNormal(position);
+            Vector3d normal = GetNormal(intersectionResult);
 
-            double u = (double)(System.Math.Atan2(normal.X, normal.Z) / (2.0f * System.Math.PI) + 0.5f);
+            double u = (System.Math.Atan2(normal.X, normal.Z) / (2.0f * System.Math.PI) + 0.5f);
             double v = -normal.Y * 0.5f + 0.5f;
 
             return new Vector2d(u, v);

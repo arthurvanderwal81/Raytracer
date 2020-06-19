@@ -49,9 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\QuadObject.cs" />
     <Compile Include="Rendering\AntiAliasingRenderer.cs" />
     <Compile Include="Rendering\AverageColor.cs" />
     <Compile Include="Rendering\AverageColorBitmap.cs" />
+    <Compile Include="Rendering\Intersection\CubeIntersectionResult.cs" />
+    <Compile Include="Rendering\Intersection\IIntersectionResult.cs" />
+    <Compile Include="Rendering\Intersection\MeshIntersectionResult.cs" />
+    <Compile Include="Rendering\Intersection\QuadIntersectionResult.cs" />
     <Compile Include="Textures\BitmapTexture.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Textures\CheckerTexture.cs" />
@@ -64,7 +69,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Lights\AbstractLight.cs" />
-    <Compile Include="Rendering\IntersectionResult.cs" />
+    <Compile Include="Rendering\Intersection\IntersectionResult.cs" />
     <Compile Include="Objects\AbstractObject3d.cs" />
     <Compile Include="Textures\ITexture.cs" />
     <Compile Include="Materials\Material.cs" />
@@ -125,6 +130,9 @@
     <Content Include="Data\Textures\rm33-chim-14-d-abstract_1.jpg" />
     <Content Include="Data\Textures\texture.jpg" />
     <Content Include="Data\Textures\Tree-Trunk.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Results\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

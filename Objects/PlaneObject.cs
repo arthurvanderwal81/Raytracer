@@ -1,5 +1,6 @@
 ﻿using Raytracer.Math;
 using Raytracer.Materials;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
@@ -31,26 +32,33 @@ namespace Raytracer.Objects
             _vAxis.Normalize();                
         }
 
-        public override Vector3d Intersection(Vector3d direction, Vector3d position)
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             double D = _position.Dot(_normal);
             double t = -(_normal.Dot(position) - D) / _normal.Dot(direction);
 
             if (t >= 0.0f)
             {
-                return t * direction + position;
+                IntersectionResult intersectionResult = new IntersectionResult();
+
+                intersectionResult.Intersection =  t * direction + position;
+                intersectionResult.IntersectionDistance = (intersectionResult.Intersection - position).Length();
+                intersectionResult.Object = this;
+
+                return intersectionResult;
             }
 
             return null;
         }
 
-        protected override Vector3d GetNormal(Vector3d positionOnObject)
+        public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
             return _normal;
         }
 
-        protected override Vector2d GetUVCoordinates(Vector3d position)
+        public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
+            Vector3d position = intersectionResult.Intersection;
             Vector2d uvCoordinates = new Vector2d();
 
             uvCoordinates.X = _uAxis.Dot(position) % 1f;

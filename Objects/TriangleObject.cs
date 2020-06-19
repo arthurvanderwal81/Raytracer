@@ -1,5 +1,6 @@
 ﻿using Raytracer.Math;
 using Raytracer.Materials;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
@@ -48,16 +49,16 @@ namespace Raytracer.Objects
             _edges[2] = _vertices[0] - _vertices[2];
         }
 
-        protected override Vector3d GetNormal(Vector3d positionOnObject)
+        public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
             return _normal;
         }
 
-        protected override Vector2d GetUVCoordinates(Vector3d position)
+        public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
             //return new Vector2d(_edges[0].Dot(position), _edges[1].Dot(position));
 
-            Vector3d f = position;
+            Vector3d f = intersectionResult.Intersection;
             Vector3d p1 = _vertices[0];
             Vector3d p2 = _vertices[1];
             Vector3d p3 = _vertices[2];
@@ -77,7 +78,7 @@ namespace Raytracer.Objects
             return uv;
         }
 
-        public override Vector3d Intersection(Vector3d direction, Vector3d position)
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             double D = _vertices[0].Dot(_normal);
             double t = -(_normal.Dot(position) - D) / _normal.Dot(direction);
@@ -102,7 +103,13 @@ namespace Raytracer.Objects
                     _normal.Dot(edge1.Cross(C1)) > 0f &&
                     _normal.Dot(edge2.Cross(C2)) > 0f)
                 {
-                    return planeIntersecion;
+                    IntersectionResult intersectionResult = new IntersectionResult();
+
+                    intersectionResult.Intersection = planeIntersecion;
+                    intersectionResult.IntersectionDistance = (intersectionResult.Intersection - position).Length();
+                    intersectionResult.Object = this;
+
+                    return intersectionResult;
                 }
             }
 

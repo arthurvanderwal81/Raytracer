@@ -1,12 +1,8 @@
-﻿using System.Drawing;
-
-using Raytracer.Math;
-using Raytracer.Objects;
-using Raytracer.Rendering;
+﻿using Raytracer.Math;
 
 namespace Raytracer.Lights
 {
-    public abstract class AbstractLight : AbstractObject3d
+    public abstract class AbstractLight
     {
         public abstract Vector3d Position { get; }
 
@@ -44,21 +40,6 @@ namespace Raytracer.Lights
             double dot = -lightDirection.Dot(surfaceNormal);
 
             return dot < 0.0f ? 0.0f : dot;
-        }
-
-        protected override Vector3d GetNormal(Vector3d positionOnObject)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Vector2d GetUVCoordinates(Vector3d positionOnObject)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Color GetColor(Vector3d direction, Vector3d position, Scene scene)
-        {
-            return Color.White;
         }
     }
 }

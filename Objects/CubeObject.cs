@@ -1,40 +1,93 @@
-﻿using System.Collections.Generic;
+﻿using System.Drawing;
+using System.Collections.Generic;
 
 using Raytracer.Math;
+using Raytracer.Rendering;
 using Raytracer.Materials;
+using Raytracer.Rendering.Intersection;
 
 namespace Raytracer.Objects
 {
-    public class CubeObject : MeshObject
+    public class CubeObject : AbstractObject3d
     {
-        private List<Material> _materials;
+        private QuadObject[] _quads;
 
-        public CubeObject(string name, Vector3d position, double size, List<Material> materials) : base(name, materials[0])
+        public CubeObject(string name, Vector3d position, double size, Material material)
         {
-            _materials = materials;
+            Name = name;
+            Material = material;
 
-            GenerateTriangles(position, size);
+            GenerateQuads(position, size);
         }
 
-        private void GenerateTriangles(Vector3d position, double size)
+        private void GenerateQuads(Vector3d position, double size)
         {
             double e = 0.5f * size;
 
             Vector3d[] corners = new Vector3d[8]
             {
-                new Vector3d(-e, -e, -e) + position,
-                new Vector3d( e, -e, -e) + position,
-                new Vector3d( e, -e,  e) + position,
-                new Vector3d(-e, -e,  e) + position,
+                new Vector3d(-e, -e, -e) + position, //0
+                new Vector3d( e, -e, -e) + position, //1
+                new Vector3d( e, -e,  e) + position, //2
+                new Vector3d(-e, -e,  e) + position, //3
 
-                new Vector3d(-e,  e, -e) + position,
-                new Vector3d( e,  e, -e) + position,
-                new Vector3d( e,  e,  e) + position,
-                new Vector3d(-e,  e,  e) + position,
+                new Vector3d(-e,  e, -e) + position, //4
+                new Vector3d( e,  e, -e) + position, //5
+                new Vector3d( e,  e,  e) + position, //6
+                new Vector3d(-e,  e,  e) + position, //7
             };
 
-            List<TriangleObject>  triangles = new List<TriangleObject>();
-            
+            _quads = new QuadObject[6];
+
+            _quads[0] = new QuadObject(string.Format("{0}_QUAD_1", Name), 
+                new Vertex(corners[0], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[3], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[4], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            _quads[1] = new QuadObject(string.Format("{0}_QUAD_2", Name),
+                new Vertex(corners[2], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[1], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            _quads[2] = new QuadObject(string.Format("{0}_QUAD_3", Name),
+                new Vertex(corners[3], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[2], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            _quads[3] = new QuadObject(string.Format("{0}_QUAD_4", Name),
+                new Vertex(corners[1], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[0], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[4], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            _quads[4] = new QuadObject(string.Format("{0}_QUAD_5", Name),
+                new Vertex(corners[4], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            _quads[5] = new QuadObject(string.Format("{0}_QUAD_6", Name),
+                new Vertex(corners[0], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[1], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[2], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[3], new Vector2d(0.0, 0.0)),
+                Material
+            );
+
+            /*
             // Bottom
             triangles.Add(new TriangleObject("CUBE_TRIANGLE_1",
                 new Vertex(corners[2], new Vector2d(0.0f, 0.0f)),
@@ -114,6 +167,39 @@ namespace Raytracer.Objects
                 _materials[11]));
 
             UpdateTriangles(triangles);
+            */
         }
+
+        public override Vector3d GetNormal(IIntersectionResult intersectionResult)
+        {
+            return (intersectionResult as CubeIntersectionResult).QuadObject.GetNormal(intersectionResult);
+        }
+
+        public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
+        {
+            return (intersectionResult as CubeIntersectionResult).QuadObject.GetUVCoordinates(intersectionResult);
+        }
+
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
+        {
+            foreach (QuadObject quadObject in _quads)
+            {
+                IIntersectionResult intersectionResult = quadObject.Intersection(direction, position);
+
+                if (intersectionResult != null)
+                {
+                    return new CubeIntersectionResult(intersectionResult as QuadIntersectionResult, quadObject, this);
+                }
+            }
+
+            return null;
+        }
+        /*
+        // This needs to be overriden because all quads can have different materials ... ???
+        public override Color GetColor(Vector3d direction, IIntersectionResult intersectionResult, Scene scene)
+        {
+            return (intersectionResult as CubeIntersectionResult).QuadObject.GetColor(direction, intersectionResult, scene);
+        }
+        */
     }
 }
