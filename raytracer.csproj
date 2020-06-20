@@ -36,6 +36,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,6 +52,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\GLB\GLBAccessor.cs" />
+    <Compile Include="Objects\GLB\GLBAttributes.cs" />
+    <Compile Include="Objects\GLB\GLBBufferView.cs" />
+    <Compile Include="Objects\GLB\GLBFileChunk.cs" />
+    <Compile Include="Objects\GLB\GLBFileData.cs" />
+    <Compile Include="Objects\GLB\GLBFileReader.cs" />
+    <Compile Include="Objects\GLB\GLBImage.cs" />
+    <Compile Include="Objects\GLB\GLBMaterial.cs" />
+    <Compile Include="Objects\GLB\GLBMesh.cs" />
+    <Compile Include="Objects\GLB\GLBPrimitive.cs" />
+    <Compile Include="Objects\GLB\GLBSampler.cs" />
+    <Compile Include="Objects\GLB\GLBTexture.cs" />
     <Compile Include="Objects\QuadObject.cs" />
     <Compile Include="Rendering\AntiAliasingRenderer.cs" />
     <Compile Include="Rendering\AverageColor.cs" />
@@ -103,6 +118,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="Data\Scenes\scene1.json" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Collections.Generic;
 
 using Raytracer.Math;
 using Raytracer.Rendering;
@@ -39,53 +38,61 @@ namespace Raytracer.Objects
 
             _quads = new QuadObject[6];
 
+            // Front
             _quads[0] = new QuadObject(string.Format("{0}_QUAD_1", Name), 
                 new Vertex(corners[0], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[3], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[4], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[3], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[7], new Vector2d(1.0, 1.0)),
+                new Vertex(corners[4], new Vector2d(1.0, 0.0)),
                 Material
             );
 
             _quads[1] = new QuadObject(string.Format("{0}_QUAD_2", Name),
                 new Vertex(corners[2], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[1], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[1], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[5], new Vector2d(1.0, 1.0)),
+                new Vertex(corners[6], new Vector2d(1.0, 0.0)),
                 Material
             );
 
             _quads[2] = new QuadObject(string.Format("{0}_QUAD_3", Name),
                 new Vertex(corners[3], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[2], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[2], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[6], new Vector2d(1.0, 1.0)),
+                new Vertex(corners[7], new Vector2d(1.0, 0.0)),
                 Material
             );
 
             _quads[3] = new QuadObject(string.Format("{0}_QUAD_4", Name),
                 new Vertex(corners[1], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[0], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[4], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[0], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[4], new Vector2d(1.0, 1.0)),
+                new Vertex(corners[5], new Vector2d(1.0, 0.0)),
                 Material
             );
 
             _quads[4] = new QuadObject(string.Format("{0}_QUAD_5", Name),
                 new Vertex(corners[4], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[7], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[6], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[5], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[7], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[6], new Vector2d(1.0, 1.0)),
+                new Vertex(corners[5], new Vector2d(1.0, 0.0)),
                 Material
             );
 
             _quads[5] = new QuadObject(string.Format("{0}_QUAD_6", Name),
                 new Vertex(corners[0], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[1], new Vector2d(0.0, 0.0)),
-                new Vertex(corners[2], new Vector2d(0.0, 0.0)),
+                new Vertex(corners[1], new Vector2d(0.0, 1.0)),
+                new Vertex(corners[2], new Vector2d(1.0, 1.0)),
                 new Vertex(corners[3], new Vector2d(0.0, 0.0)),
                 Material
             );
+
+            _quads[0].Parent = this;
+            _quads[1].Parent = this;
+            _quads[2].Parent = this;
+            _quads[3].Parent = this;
+            _quads[4].Parent = this;
+            _quads[5].Parent = this;
 
             /*
             // Bottom
@@ -172,34 +179,69 @@ namespace Raytracer.Objects
 
         public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
-            return (intersectionResult as CubeIntersectionResult).QuadObject.GetNormal(intersectionResult);
+            CubeIntersectionResult cubeIntersectionResult = intersectionResult as CubeIntersectionResult;
+
+            return cubeIntersectionResult.TriangleObject.GetNormal(cubeIntersectionResult.QuadObjectIntersectionResult.TriangleObjectIntersectionResult);
         }
 
         public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
-            return (intersectionResult as CubeIntersectionResult).QuadObject.GetUVCoordinates(intersectionResult);
+            CubeIntersectionResult cubeIntersectionResult = intersectionResult as CubeIntersectionResult;
+
+            return cubeIntersectionResult.TriangleObject.GetUVCoordinates(cubeIntersectionResult.QuadObjectIntersectionResult.TriangleObjectIntersectionResult);
+        }
+
+        public override bool IsVisible(Camera camera)
+        {
+            foreach (QuadObject quadObject in _quads)
+            {
+                if (quadObject.IsVisible(camera))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
+            IIntersectionResult nearestIntersectionResult = null;
+
             foreach (QuadObject quadObject in _quads)
             {
+                //QuadObject quadObject = _quads[3];
                 IIntersectionResult intersectionResult = quadObject.Intersection(direction, position);
 
                 if (intersectionResult != null)
                 {
-                    return new CubeIntersectionResult(intersectionResult as QuadIntersectionResult, quadObject, this);
+                    if (nearestIntersectionResult == null)
+                    {
+                        nearestIntersectionResult = intersectionResult;
+                    }
+                    else
+                    {
+                        if (intersectionResult.IntersectionDistance < nearestIntersectionResult.IntersectionDistance)
+                        {
+                            nearestIntersectionResult = intersectionResult;
+                        }
+                    }
                 }
+            }
+
+            if (nearestIntersectionResult != null)
+            {
+                return new CubeIntersectionResult(this, nearestIntersectionResult as QuadIntersectionResult);
             }
 
             return null;
         }
-        /*
-        // This needs to be overriden because all quads can have different materials ... ???
+
         public override Color GetColor(Vector3d direction, IIntersectionResult intersectionResult, Scene scene)
         {
-            return (intersectionResult as CubeIntersectionResult).QuadObject.GetColor(direction, intersectionResult, scene);
+            CubeIntersectionResult cubeIntersectionResult = intersectionResult as CubeIntersectionResult;
+
+            return cubeIntersectionResult.TriangleObject.GetColor(direction, cubeIntersectionResult.QuadObjectIntersectionResult.TriangleObjectIntersectionResult, scene);
         }
-        */
     }
 }

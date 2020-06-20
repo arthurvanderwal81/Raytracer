@@ -106,11 +106,11 @@ namespace Raytracer.Math
 
         public static bool operator ==(Vector2d a, Vector2d b)
         {
-            if (object.ReferenceEquals(a, null))
+            if (ReferenceEquals(a, null))
             {
-                return object.ReferenceEquals(b, null);
+                return ReferenceEquals(b, null);
             }
-            else if (object.ReferenceEquals(b, null))
+            else if (ReferenceEquals(b, null))
             {
                 return false;
             }
@@ -121,6 +121,25 @@ namespace Raytracer.Math
         public static bool operator !=(Vector2d a, Vector2d b)
         {
             return !(a == b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj as Vector2d) == this;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+
+                return hash;
+            }
         }
     }
 }

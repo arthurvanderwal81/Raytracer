@@ -1,4 +1,5 @@
 ﻿using Raytracer.Math;
+using Raytracer.Rendering;
 using Raytracer.Materials;
 using Raytracer.Rendering.Intersection;
 
@@ -32,25 +33,6 @@ namespace Raytracer.Objects
             _vAxis.Normalize();                
         }
 
-        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
-        {
-            double D = _position.Dot(_normal);
-            double t = -(_normal.Dot(position) - D) / _normal.Dot(direction);
-
-            if (t >= 0.0f)
-            {
-                IntersectionResult intersectionResult = new IntersectionResult();
-
-                intersectionResult.Intersection =  t * direction + position;
-                intersectionResult.IntersectionDistance = (intersectionResult.Intersection - position).Length();
-                intersectionResult.Object = this;
-
-                return intersectionResult;
-            }
-
-            return null;
-        }
-
         public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
             return _normal;
@@ -65,6 +47,30 @@ namespace Raytracer.Objects
             uvCoordinates.Y = _vAxis.Dot(position) % 1f;
 
             return uvCoordinates;
+        }
+
+        public override bool IsVisible(Camera camera)
+        {
+            return true;
+        }
+
+        public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
+        {
+            double D = _position.Dot(_normal);
+            double t = -(_normal.Dot(position) - D) / _normal.Dot(direction);
+
+            if (t >= 0.0f)
+            {
+                IntersectionResult intersectionResult = new IntersectionResult();
+
+                intersectionResult.Intersection = t * direction + position;
+                intersectionResult.IntersectionDistance = (intersectionResult.Intersection - position).Length();
+                intersectionResult.Object = this;
+
+                return intersectionResult;
+            }
+
+            return null;
         }
     }
 }

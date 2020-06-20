@@ -35,6 +35,19 @@ namespace Raytracer.Objects
             return (intersectionResult as MeshIntersectionResult).TriangleObject.GetUVCoordinates(intersectionResult);
         }
 
+        public override bool IsVisible(Camera camera)
+        {
+            foreach (TriangleObject triangle in _triangles)
+            {
+                if (triangle.IsVisible(camera))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             foreach (TriangleObject triangle in _triangles)

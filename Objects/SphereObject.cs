@@ -1,4 +1,5 @@
 ﻿using Raytracer.Math;
+using Raytracer.Rendering;
 using Raytracer.Materials;
 using Raytracer.Rendering.Intersection;
 
@@ -42,6 +43,11 @@ namespace Raytracer.Objects
             }
 
             return normal.Normalize();
+        }
+
+        public override bool IsVisible(Camera camera)
+        {
+            return (camera.Direction.Dot(_position - camera.Position) + _radius) >= 0d;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)

@@ -1,4 +1,5 @@
 ﻿using Raytracer.Math;
+using Raytracer.Rendering;
 using Raytracer.Materials;
 using Raytracer.Rendering.Intersection;
 
@@ -76,6 +77,11 @@ namespace Raytracer.Objects
             Vector2d uv = new Vector2d(_vertices[0].UV * a1 + _vertices[1].UV * a2 + _vertices[2].UV * a3);
 
             return uv;
+        }
+
+        public override bool IsVisible(Camera camera)
+        {
+            return camera.Direction.Dot(_normal) <= 0.0d;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)

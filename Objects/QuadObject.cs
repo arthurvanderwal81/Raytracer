@@ -27,6 +27,9 @@ namespace Raytracer.Objects
             _triangles[0] = new TriangleObject(string.Format("{0}_TRIANGLE_1", Name), v0, v1, v2, Material);
             _triangles[1] = new TriangleObject(string.Format("{0}_TRIANGLE_2", Name), v2, v3, v0, Material);
 
+            _triangles[0].Parent = this;
+            _triangles[1].Parent = this;
+
             if (_triangles[0].GetNormal(null) != _triangles[1].GetNormal(null))
             {
                 throw new Exception("Triangles are not in the same plane");
@@ -35,12 +38,21 @@ namespace Raytracer.Objects
 
         public override Vector3d GetNormal(IIntersectionResult intersectionResult)
         {
-            return (intersectionResult as QuadIntersectionResult).TriangleObject.GetNormal(intersectionResult);
+            QuadIntersectionResult quadIntersectionResult = intersectionResult as QuadIntersectionResult;
+
+            return quadIntersectionResult.TriangleObjectIntersectionResult.Object.GetNormal(quadIntersectionResult.TriangleObjectIntersectionResult);
         }
 
         public override Vector2d GetUVCoordinates(IIntersectionResult intersectionResult)
         {
-            return (intersectionResult as QuadIntersectionResult).TriangleObject.GetUVCoordinates(intersectionResult);
+            QuadIntersectionResult quadIntersectionResult = intersectionResult as QuadIntersectionResult;
+
+            return quadIntersectionResult.TriangleObjectIntersectionResult.Object.GetUVCoordinates(quadIntersectionResult.TriangleObjectIntersectionResult);
+        }
+
+        public override bool IsVisible(Camera camera)
+        {
+            return _triangles[0].IsVisible(camera) || _triangles[1].IsVisible(camera);
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
@@ -51,24 +63,24 @@ namespace Raytracer.Objects
 
             if (result != null)
             {
-                return new QuadIntersectionResult(result, this);
+                return new QuadIntersectionResult(this, result as IntersectionResult);
             }
 
             result = _triangles[1].Intersection(direction, position);
 
             if (result != null)
             {
-                return new QuadIntersectionResult(result, this);
+                return new QuadIntersectionResult(this, result as IntersectionResult);
             }
 
             return null;
         }
 
-        /*
         public override Color GetColor(Vector3d direction, IIntersectionResult intersectionResult, Scene scene)
         {
-            return (intersectionResult as QuadIntersectionResult).TriangleObject.GetColor(direction, intersectionResult, scene);
+            QuadIntersectionResult quadIntersectionResult = intersectionResult as QuadIntersectionResult;
+
+            return quadIntersectionResult.TriangleObjectIntersectionResult.Object.GetColor(direction, quadIntersectionResult.TriangleObjectIntersectionResult, scene);
         }
-        */
     }
 }

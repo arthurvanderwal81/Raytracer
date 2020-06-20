@@ -167,5 +167,25 @@ namespace Raytracer.Math
         {
             return !(a == b);
         }
+
+        public override bool Equals(object obj)
+        {
+            return (obj as Vector3d) == this;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+                hash = hash * 23 + Z.GetHashCode();
+
+                return hash;
+            }
+        }
     }
 }

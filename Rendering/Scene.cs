@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Raytracer.Math;
 using Raytracer.Objects;
@@ -9,8 +10,10 @@ namespace Raytracer.Rendering
 {
     public class Scene
     {
-        public List<AbstractObject3d> Objects { get; private set; }
-        public List<AbstractLight> Lights { get; private set; }
+        private List<AbstractObject3d> _visibleObjects;
+
+        public List<AbstractObject3d> Objects { get; set; }
+        public List<AbstractLight> Lights { get; set; }
 
         public Scene()
         {
@@ -18,11 +21,34 @@ namespace Raytracer.Rendering
             Lights = new List<AbstractLight>();
         }
 
+        /*
+        public void AddObject(AbstractObject3d object3d)
+        {
+            if (Objects.Any(o => o.Name == object3d.Name))
+            {
+                throw new Exception("Object name not unique");
+            }
+
+            Objects.Add(object3d);
+        }
+
+        public void AddLight(AbstractLight light)
+        {
+            Lights.Add(light);
+        }
+        */
+
+        public void UpdateVisibleObjects(Camera camera)
+        {
+            _visibleObjects = Objects.Where(o => o.IsVisible(camera)).ToList();
+        }
+
         public IIntersectionResult GetNearestObjectIntersection(Vector3d direction, Vector3d position, AbstractObject3d excludeObject = null)
         {
             IIntersectionResult nearestIntersectionResult = null;
 
-            foreach (AbstractObject3d o in Objects)
+            //foreach (AbstractObject3d o in Objects)
+            foreach (AbstractObject3d o in _visibleObjects)
             {
                 if (excludeObject == o)
                 {
@@ -42,23 +68,6 @@ namespace Raytracer.Rendering
                         nearestIntersectionResult = intersectionResult;
                     }
                 }
-
-                /*
-                // TODO move this to o.Intersection (distance, setting of object, return intersectionresult)
-                Vector3d intersection = o.Intersection(direction, position);
-
-                if (intersection != null)
-                {
-                    double intersectionDistance = (intersection - position).Length();
-
-                    if (intersectionDistance < intersectionResult.IntersectionDistance)
-                    {
-                        intersectionResult.IntersectionDistance = intersectionDistance;
-                        intersectionResult.Intersection = intersection;
-                        intersectionResult.Object = o;
-                    }
-                }
-                */
             }
 
             return nearestIntersectionResult;

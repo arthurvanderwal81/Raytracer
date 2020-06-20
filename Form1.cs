@@ -9,6 +9,7 @@ using Raytracer.Lights;
 using Raytracer.Objects;
 using Raytracer.Textures;
 using Raytracer.Materials;
+using Raytracer.Objects.GLB;
 
 namespace Raytracer
 {
@@ -23,7 +24,6 @@ namespace Raytracer
             MouseDown += Form1MouseDown;
 
             // TODO:
-            // CHECK ALL CUBE FACE NORMALS
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Create inverse cube object
             // Add transparant surfaces
@@ -35,15 +35,26 @@ namespace Raytracer
             // MIPMAPPING
             // Bounding sphere light problem
 
-            this.ClientSize = new Size(1024, 768 + progressBar1.Height);
+            int renderResultWidth = 1024;
+            int renderResultHeight = 768;
+
+            this.ClientSize = new Size(renderResultWidth, renderResultHeight + progressBar1.Height);
+            Rendering.Raytracer raytracer = new Rendering.Raytracer(renderResultWidth, renderResultHeight, false);
+            raytracer.Camera.FocalLength = 1.5;
 
             //Raytracer raytracer = new Raytracer(this.ClientSize, false);
-            Rendering.Raytracer raytracer = new Rendering.Raytracer(1024, 768, true);
-            //Raytracer raytracer = new Raytracer(3840, 2160);
+            //Rendering.Raytracer raytracer = new Rendering.Raytracer(1024, 768, false);
+            //Rendering.Raytracer raytracer = new Rendering.Raytracer(3840, 2160, false);
             //Raytracer raytracer = new Raytracer(7680, 4320);
 
-            raytracer.Camera.Position = new Vector3d(5f, 5f, 2f);
-            raytracer.Camera.LookAt(new Vector3d(10f, 2f, 0f));
+            //raytracer.Camera.Position = new Vector3d(5f, 5f, 2f);
+            //raytracer.Camera.LookAt(new Vector3d(10d, 2d, -1.5d));
+
+            raytracer.Camera.Position = new Vector3d(5f, 5f, -2f);
+            raytracer.Camera.LookAt(new Vector3d(10d, 2d, 1.5d));
+
+            //raytracer.Camera.Position = new Vector3d(60d, 60d, 60d);
+            //raytracer.Camera.LookAt(new Vector3d(0d, 0d, 0d));
 
             Vector3d focalPoint = raytracer.Camera.Position + raytracer.Camera.GetRayDirection(1024/2, 768/2) * raytracer.Camera.FocalLength;
 
@@ -58,8 +69,8 @@ namespace Raytracer
             blueMaterial.Reflection = 0.1f;
 
             Material reflectiveMaterial = new Material();
-            reflectiveMaterial.Color = new Color3f(.8, .8, .8);
-            reflectiveMaterial.Reflection = .9f;
+            reflectiveMaterial.Color = new Color3f(.7, .7, .7);
+            reflectiveMaterial.Reflection = .7f;
 
             Material semiReflectiveMaterial = new Material();
             semiReflectiveMaterial.Reflection = 0.5f;
@@ -107,12 +118,19 @@ namespace Raytracer
                 testMaterials.Add(material);
             }
 
-            raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
-            //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
-            raytracer.Scene.Objects.Add(new CubeObject("CUBE_MIDDLE", new Vector3d(10f, 2f, 0f), 2f, testMaterials[5]));
+            /*
+            GLBFileData gblFileData = GLBFileReader.ReadFile(@"..\..\Data\Objects\Pig.glb");
+            raytracer.Scene.Objects.AddRange(gblFileData.Meshes[0].GetTriangleObjects(0));
+
+            raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(49d, 49d, 49d)));
+            */
+
+            //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
+            raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
+            raytracer.Scene.Objects.Add(new CubeObject("CUBE_RIGHT", new Vector3d(10f, 2f, 3f), 2f, woodMaterial));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_LEFT",     new Vector3d(10f, 2f, -3f), 1f, blueMaterial));
 
-            //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_FOCUS", raytracer.Camera.Position + raytracer.Camera.Direction * raytracer.Camera.FocalLength, 0.3f, reflectiveMaterial));
+            raytracer.Scene.Objects.Add(new SphereObject("SPHERE_FOCUS", raytracer.Camera.Position + raytracer.Camera.Direction * raytracer.Camera.FocalLength, 0.15f, reflectiveMaterial));
 
             //raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_1", new Vertex(12f, 1f, -10f, 0f, 1f), new Vertex(12f, 1f, 10f, 1f, 1f), new Vertex(12f, 16f, 10f, 1f, 0f), backgroundMaterial1));
             //raytracer.Scene.Objects.Add(new TriangleObject("VERTICAL_TRIANGLE_2", new Vertex(12f, 16f, 10f, 1f, 0f), new Vertex(12f, 16f, -10f, 0f, 0f), new Vertex(12f, 1f, -10f, 0f, 1f), backgroundMaterial1));
@@ -125,13 +143,27 @@ namespace Raytracer
             raytracer.Scene.Objects.Add(new PlaneObject("FLOOR_PLANE", new Vector3d(0f, 1f, 0f), new Vector3d(0f, 1f, 0f), checkerMaterial));
             //raytracer.Scene.Objects.Add(new PlaneObject("VERTICAL_PLANE", new Vector3d(15f, 0f, 0f), new Vector3d(-1f, 0f, 0f), checkerMaterial));
 
-            raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), raytracer.Camera.Position));
+            PointLight cameraLight = new PointLight(new Color3f(246.0/255.0, 205.0/255.0, 139.0/255.0), raytracer.Camera.Position);
+            cameraLight.DiffusePower = 6f;
+            //cameraLight.SpecularPower = 10f;
+            raytracer.Scene.Lights.Add(cameraLight);
 
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(10d, 4d, 3d)));
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(10d, 7d, 0d)));
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(10d, 13,-3d)));
 
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(9d, 1, -3d)));
+
+            //raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(8d, 2d, 3d)));
+            //raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(10d, 2d, 1d)));
+
+            raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(8d, 4d, 1d)));
+            raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(12d, 4d, 5d)));
+            raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(12d, -2d, 5d)));
+
+            //raytracer.Camera.Position = new Vector3d(14d, -6d, 7d);
+            //raytracer.Camera.Direction = new Vector3d(1d, 0d, 0d);
+            //raytracer.Camera.LookAt(new Vector3d(10d, 2d, 3d));
 
             raytracer.RenderProgress = new Rendering.Raytracer.ProgressDelegate(RaytracerProgressUpdate);
             raytracer.RenderComplete = new Rendering.Raytracer.RenderCompleteDelegate(RaytracerRenderComplete);

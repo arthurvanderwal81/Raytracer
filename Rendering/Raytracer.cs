@@ -150,7 +150,6 @@ namespace Raytracer.Rendering
                     color = intersectionResult.Object.GetColor(raydirection, intersectionResult, raytracerData.Scene);
                 }
 
-                //result.SetPixel(x, y, color);
                 byte* pixelPointer = raytracerData.ScanLine + x * 3;
 
                 pixelPointer[0] = color.B;
@@ -161,20 +160,18 @@ namespace Raytracer.Rendering
 
         public unsafe void Render()
         {
+            Scene.UpdateVisibleObjects(Camera);
+
             Bitmap result = new Bitmap(_screenResolutionX, _screenResolutionY, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
             Rectangle rect = new Rectangle(0, 0, result.Width, result.Height);
-            System.Drawing.Imaging.BitmapData bmpData =
-                result.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
-                result.PixelFormat);
+            System.Drawing.Imaging.BitmapData bmpData = result.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly, result.PixelFormat);
 
             byte* scan0 = (byte*)bmpData.Scan0.ToPointer();
 
             for (int y = 0; y < _screenResolutionY; y++)
             {
                 byte* scanLine = scan0 + y * bmpData.Stride;
-
-                Thread thread = new Thread(RenderScanLine);
 
                 RaytracerData raytracerData = new RaytracerData()
                 {
@@ -185,8 +182,6 @@ namespace Raytracer.Rendering
                     Scene = Scene,
                     ScanLine = scanLine
                 };
-
-                //Thread.Start(raytracerData);
 
                 if (_renderDOF)
                 {
@@ -203,59 +198,6 @@ namespace Raytracer.Rendering
             result.UnlockBits(bmpData);
 
             RenderComplete?.Invoke(result);
-        }
-
-        public unsafe Bitmap RenderOld()
-        {
-            Bitmap result = new Bitmap(_screenResolutionX, _screenResolutionY, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            Rectangle rect = new Rectangle(0, 0, result.Width, result.Height);
-            System.Drawing.Imaging.BitmapData bmpData =
-                result.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
-                result.PixelFormat);
-
-            /*
-            Vector3d raydirection = Vector3d.Normalize(1f, -1f, 0f);
-            Vector3d rayposition = new Vector3d(-10f, 10f, 0f);
-
-            Vector3d intersection = Scene.Objects[0].Intersection(raydirection, rayposition);
-
-            return null;
-            */
-
-            byte* scan0 = (byte*)bmpData.Scan0.ToPointer();
-
-            for (int y = 0; y < _screenResolutionY; y++)
-            {
-                for (int x = 0; x < _screenResolutionX; x++)
-                {
-                    //x = 953;
-                    //y = 397;
-
-                    Vector3d raydirection = Camera.GetRayDirection(x, y);
-                    Vector3d rayposition = Camera.Position;
-
-                    IIntersectionResult intersectionResult = Scene.GetNearestObjectIntersection(raydirection, rayposition);
-
-                    Color color = Color.Black;
-
-                    if (intersectionResult.Object != null)
-                    {
-                        color = intersectionResult.Object.GetColor(raydirection, intersectionResult, Scene);
-                    }
-
-                    //result.SetPixel(x, y, color);
-                    byte* data = scan0 + y * bmpData.Stride + x * 3;
-
-                    data[0] = color.B;
-                    data[1] = color.G;
-                    data[2] = color.R;
-                }
-            }
-
-            result.UnlockBits(bmpData);
-
-            return result;
         }
     }
 }

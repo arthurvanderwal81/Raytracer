@@ -6,11 +6,11 @@ namespace Raytracer.Lights
     {
         public abstract Vector3d Position { get; }
 
-        public Color3f DiffuseColor { get; protected set; }
-        public double DiffusePower { get; protected set; }
+        public Color3f DiffuseColor { get; set; }
+        public double DiffusePower { get; set; }
 
-        public Color3f SpecularColor { get; protected set; }
-        public double SpecularPower { get; protected set; }
+        public Color3f SpecularColor { get; set; }
+        public double SpecularPower { get; set; }
 
         public AbstractLight(Color3f diffuseColor)
         {

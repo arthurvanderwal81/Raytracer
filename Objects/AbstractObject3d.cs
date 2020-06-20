@@ -10,12 +10,32 @@ namespace Raytracer.Objects
 {
     public abstract class AbstractObject3d
     {
+        public AbstractObject3d Parent { get; set; }
         public string Name { get; set; }
         public Material Material { get; set; }
+
+        public AbstractObject3d GetTopParent()
+        {
+            if (Parent == null)
+            {
+                return this;
+            }
+
+            AbstractObject3d currentObject = this;
+
+            while (currentObject.Parent != null)
+            {
+                currentObject = currentObject.Parent;
+            }
+
+            return currentObject;
+        }
 
         public abstract Vector3d GetNormal(IIntersectionResult intersectionResult);
 
         public abstract Vector2d GetUVCoordinates(IIntersectionResult intersectionResult);
+
+        public abstract bool IsVisible(Camera camera);
 
         public abstract IIntersectionResult Intersection(Vector3d direction, Vector3d position);
 
@@ -35,8 +55,13 @@ namespace Raytracer.Objects
 
                 if (reflectionIntersectionResult != null)
                 {
-                    reflectionColor = new Color3f(intersectionResult.Object.GetColor(direction, reflectionIntersectionResult, scene));
+                    reflectionColor = new Color3f(reflectionIntersectionResult.Object.GetColor(direction, reflectionIntersectionResult, scene));
                 }
+            }
+
+            if (scene.Lights.Count == 0)
+            {
+                return surfaceColor.ToColor();
             }
 
             foreach (AbstractLight light in scene.Lights)
@@ -50,7 +75,7 @@ namespace Raytracer.Objects
 
                     foreach (AbstractObject3d o in scene.Objects)
                     {
-                        if (o == this)
+                        if (o.GetTopParent() == this.GetTopParent())
                         {
                             continue;
                         }
