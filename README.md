@@ -1,3 +1,3 @@
 # Raytracer
 
-!(Data\Results\443868640.bmp)
+![alt text](Data/Results/443868640.png)
