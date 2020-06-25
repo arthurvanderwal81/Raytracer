@@ -79,9 +79,11 @@ namespace Raytracer.Objects
             return uv;
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
-            return camera.Direction.Dot(_normal) <= 0.0d;
+            Visible = camera.Direction.Dot(_normal) <= 0.0d;
+
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)

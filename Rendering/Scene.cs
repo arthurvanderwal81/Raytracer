@@ -40,7 +40,17 @@ namespace Raytracer.Rendering
 
         public void UpdateVisibleObjects(Camera camera)
         {
-            _visibleObjects = Objects.Where(o => o.IsVisible(camera)).ToList();
+            _visibleObjects = new List<AbstractObject3d>();
+
+            foreach (AbstractObject3d o in Objects)
+            {
+                if (o.UpdateVisibility(camera))
+                {
+                    _visibleObjects.Add(o);
+                }
+            }
+
+            //_visibleObjects = Objects.Where(o => o.IsVisible(camera)).ToList();
         }
 
         public IIntersectionResult GetNearestObjectIntersection(Vector3d direction, Vector3d position, AbstractObject3d excludeObject = null)

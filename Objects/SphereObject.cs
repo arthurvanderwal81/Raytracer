@@ -45,9 +45,11 @@ namespace Raytracer.Objects
             return normal.Normalize();
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
-            return (camera.Direction.Dot(_position - camera.Position) + _radius) >= 0d;
+            Visible = (camera.Direction.Dot(_position - camera.Position) + _radius) >= 0d;
+
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)

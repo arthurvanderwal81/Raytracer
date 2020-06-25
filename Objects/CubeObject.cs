@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Linq;
+using System.Drawing;
 
 using Raytracer.Math;
 using Raytracer.Rendering;
@@ -191,26 +192,27 @@ namespace Raytracer.Objects
             return cubeIntersectionResult.TriangleObject.GetUVCoordinates(cubeIntersectionResult.QuadObjectIntersectionResult.TriangleObjectIntersectionResult);
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
+            Visible = false;
+
             foreach (QuadObject quadObject in _quads)
             {
-                if (quadObject.IsVisible(camera))
+                if (quadObject.UpdateVisibility(camera))
                 {
-                    return true;
+                    Visible = true;
                 }
             }
 
-            return false;
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
             IIntersectionResult nearestIntersectionResult = null;
 
-            foreach (QuadObject quadObject in _quads)
+            foreach (QuadObject quadObject in _quads.Where(q => q.Visible))
             {
-                //QuadObject quadObject = _quads[3];
                 IIntersectionResult intersectionResult = quadObject.Intersection(direction, position);
 
                 if (intersectionResult != null)

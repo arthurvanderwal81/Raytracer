@@ -49,9 +49,11 @@ namespace Raytracer.Objects
             return uvCoordinates;
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
-            return true;
+            Visible = true;
+
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)

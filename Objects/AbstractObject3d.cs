@@ -11,6 +11,7 @@ namespace Raytracer.Objects
     public abstract class AbstractObject3d
     {
         public AbstractObject3d Parent { get; set; }
+        public bool Visible { get; set; }
         public string Name { get; set; }
         public Material Material { get; set; }
 
@@ -35,7 +36,7 @@ namespace Raytracer.Objects
 
         public abstract Vector2d GetUVCoordinates(IIntersectionResult intersectionResult);
 
-        public abstract bool IsVisible(Camera camera);
+        public abstract bool UpdateVisibility(Camera camera);
 
         public abstract IIntersectionResult Intersection(Vector3d direction, Vector3d position);
 

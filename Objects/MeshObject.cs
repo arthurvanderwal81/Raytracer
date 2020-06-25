@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Linq;
+using System.Drawing;
 using System.Collections.Generic;
 
 using Raytracer.Math;
@@ -35,22 +36,24 @@ namespace Raytracer.Objects
             return (intersectionResult as MeshIntersectionResult).TriangleObject.GetUVCoordinates(intersectionResult);
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
+            Visible = false;
+
             foreach (TriangleObject triangle in _triangles)
             {
-                if (triangle.IsVisible(camera))
+                if (triangle.UpdateVisibility(camera))
                 {
-                    return true;
+                    Visible = true;
                 }
             }
 
-            return false;
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
         {
-            foreach (TriangleObject triangle in _triangles)
+            foreach (TriangleObject triangle in _triangles.Where(t => t.Visible))
             {
                 IIntersectionResult intersectionResult = triangle.Intersection(direction, position);
 

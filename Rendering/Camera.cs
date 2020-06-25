@@ -6,6 +6,8 @@ namespace Raytracer.Rendering
     {
         private int _screenResolutionX;
         private int _screenResolutionY;
+
+        private double _cameraSize = 1.0d;
         private double _aspectRatio;
         private double _projectionPlaneOffset;
 
@@ -51,7 +53,7 @@ namespace Raytracer.Rendering
             worldSpaceY.Normalize();
             worldSpaceX.Normalize();
 
-            Vector3d worldSpace = Position + Direction * _projectionPlaneOffset + worldSpaceX * normalizedScreenSpace.X + worldSpaceY * -normalizedScreenSpace.Y;
+            Vector3d worldSpace = Position + Direction * _projectionPlaneOffset + worldSpaceX * normalizedScreenSpace.X + worldSpaceY * -normalizedScreenSpace.Y; // TODO * _cameraSize
 
             return worldSpace;
         }

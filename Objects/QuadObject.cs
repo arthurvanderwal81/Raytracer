@@ -50,9 +50,11 @@ namespace Raytracer.Objects
             return quadIntersectionResult.TriangleObjectIntersectionResult.Object.GetUVCoordinates(quadIntersectionResult.TriangleObjectIntersectionResult);
         }
 
-        public override bool IsVisible(Camera camera)
+        public override bool UpdateVisibility(Camera camera)
         {
-            return _triangles[0].IsVisible(camera) || _triangles[1].IsVisible(camera);
+            Visible = _triangles[0].UpdateVisibility(camera) || _triangles[1].UpdateVisibility(camera);
+
+            return Visible;
         }
 
         public override IIntersectionResult Intersection(Vector3d direction, Vector3d position)
