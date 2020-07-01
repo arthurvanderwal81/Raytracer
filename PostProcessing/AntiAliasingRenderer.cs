@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Raytracer.Rendering
+using Raytracer.Rendering;
+
+namespace Raytracer.PostProcessing
 {
     public class AntiAliasingRenderer
     {

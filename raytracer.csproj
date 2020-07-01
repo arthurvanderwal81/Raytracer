@@ -65,7 +65,10 @@
     <Compile Include="Objects\GLB\GLBSampler.cs" />
     <Compile Include="Objects\GLB\GLBTexture.cs" />
     <Compile Include="Objects\QuadObject.cs" />
-    <Compile Include="Rendering\AntiAliasingRenderer.cs" />
+    <Compile Include="PostProcessing\BoxBlurRenderer.cs" />
+    <Compile Include="PostProcessing\ConvolutionRenderer.cs" />
+    <Compile Include="PostProcessing\RadialBlurRenderer.cs" />
+    <Compile Include="PostProcessing\AntiAliasingRenderer.cs" />
     <Compile Include="Rendering\AverageColor.cs" />
     <Compile Include="Rendering\AverageColorBitmap.cs" />
     <Compile Include="Rendering\Intersection\CubeIntersectionResult.cs" />

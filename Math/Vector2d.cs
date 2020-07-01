@@ -104,6 +104,16 @@ namespace Raytracer.Math
             return result;
         }
 
+        public static Vector2d operator /(Vector2d a, double x)
+        {
+            Vector2d result = new Vector2d();
+
+            result.X = a.X / x;
+            result.Y = a.Y / x;
+
+            return result;
+        }
+
         public static bool operator ==(Vector2d a, Vector2d b)
         {
             if (ReferenceEquals(a, null))

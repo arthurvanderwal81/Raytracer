@@ -10,6 +10,7 @@ using Raytracer.Objects;
 using Raytracer.Textures;
 using Raytracer.Materials;
 using Raytracer.Objects.GLB;
+using Raytracer.PostProcessing;
 
 namespace Raytracer
 {
@@ -22,6 +23,15 @@ namespace Raytracer
             InitializeComponent();
 
             MouseDown += Form1MouseDown;
+
+            //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\fp695.png", 21, 20);
+            //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\IMG_20200618_191644.jpg", 21, 20);            
+            //_raytracerOutput = radialBlurRenderer.Render();
+
+            //_raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
+
+            //BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(@"..\..\Data\Textures\fp695.png", 5);
+            //_raytracerOutput = boxBlurRenderer.Render();
 
             // TODO:
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0

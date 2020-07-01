@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Raytracer.Math
 {
@@ -36,7 +37,11 @@ namespace Raytracer.Math
         {
         }
 
-        public Color3f(Color color) : base(color.R / 255f, color.G / 255f, color.B / 255f)
+        public Color3f(Color color) : base(color.R / 255.0, color.G / 255.0, color.B / 255.0)
+        {
+        }
+
+        unsafe public Color3f(byte* bitmap) : base(bitmap[2] / 255.0, bitmap[1] / 255.0, bitmap[0] / 255.0)
         {
         }
 
@@ -104,6 +109,16 @@ namespace Raytracer.Math
             result.Z = a.Z / x;
 
             return result;
+        }
+
+        public static bool operator ==(Color3f a, Color3f b)
+        {
+            return a.R == b.R && a.G == b.G && a.B == b.B;
+        }
+
+        public static bool operator !=(Color3f a, Color3f b)
+        {
+            return !(a == b);
         }
 
         public Color ToColor()
