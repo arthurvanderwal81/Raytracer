@@ -24,6 +24,9 @@ namespace Raytracer
 
             MouseDown += Form1MouseDown;
 
+            PixelateRenderer pixelate = new PixelateRenderer(@"..\..\Data\Textures\10531.people.jpg", new Rectangle(235, 87, 50, 50), new Size(5, 5));
+            _raytracerOutput = pixelate.Render();
+
             //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\fp695.png", 21, 20);
             //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\IMG_20200618_191644.jpg", 21, 20);            
             //_raytracerOutput = radialBlurRenderer.Render();
@@ -32,7 +35,7 @@ namespace Raytracer
 
             //BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(@"..\..\Data\Textures\fp695.png", 5);
             //_raytracerOutput = boxBlurRenderer.Render();
-
+            /*
             // TODO:
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Create inverse cube object
@@ -133,7 +136,7 @@ namespace Raytracer
             raytracer.Scene.Objects.AddRange(gblFileData.Meshes[0].GetTriangleObjects(0));
 
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(49d, 49d, 49d)));
-            */
+            *//*
 
             //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
@@ -179,7 +182,7 @@ namespace Raytracer
             raytracer.RenderComplete = new Rendering.Raytracer.RenderCompleteDelegate(RaytracerRenderComplete);
 
             Thread thread = new Thread(raytracer.Render);
-            thread.Start();
+            thread.Start();*/
         }
 
         private void RaytracerProgressUpdate(float progress)
