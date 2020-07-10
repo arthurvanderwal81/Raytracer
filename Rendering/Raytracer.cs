@@ -10,7 +10,7 @@ namespace Raytracer.Rendering
     public class Raytracer 
     {
         public delegate void ProgressDelegate(float progress);
-        public delegate void RenderCompleteDelegate(Bitmap result);
+        public delegate void RenderCompleteDelegate(RenderTarget result);
 
         public ProgressDelegate RenderProgress;
         public RenderCompleteDelegate RenderComplete;
@@ -23,6 +23,7 @@ namespace Raytracer.Rendering
             public Camera Camera { get; set; }
             public Scene Scene { get; set; }
             public byte* ScanLine { get; set; }
+            public DepthBuffer DepthBuffer { get; set; }
         }
 
         private int _screenResolutionX;
@@ -58,7 +59,6 @@ namespace Raytracer.Rendering
             {
                 AverageColor averageColor = new AverageColor();
 
-                Vector3d testRay = raytracerData.Camera.GetRayDirection(x, raytracerData.Y);
                 Vector3d focalPoint = raytracerData.Camera.Position + raytracerData.Camera.GetRayDirection(x, raytracerData.Y) * raytracerData.Camera.FocalLength;
 
                 Vector3d ws0 = raytracerData.Camera.ScreenSpaceToWorldSpace(x - 5, raytracerData.Y - 5);
@@ -99,8 +99,6 @@ namespace Raytracer.Rendering
                     {
                         Vector3d pixelWorldSpace = raytracerData.Camera.ScreenSpaceToWorldSpace(xx, yy);
                         Vector3d rayDirection = (focalPoint - pixelWorldSpace).Normalize();
-
-                        Vector3d deltaRay = rayDirection - testRay;
 
                         //Vector3d raydirection = raytracerData.Camera.GetRayDirection(x, raytracerData.Y);
                         //Vector3d rayposition = raytracerData.Camera.Position;
@@ -148,6 +146,9 @@ namespace Raytracer.Rendering
                 if (intersectionResult != null)
                 {
                     color = intersectionResult.Object.GetColor(raydirection, intersectionResult, raytracerData.Scene);
+
+                    double z = raytracerData.Camera.Direction.Dot(intersectionResult.Intersection);
+                    raytracerData.DepthBuffer[raytracerData.Y, x] = z;
                 }
 
                 byte* pixelPointer = raytracerData.ScanLine + x * 3;
@@ -162,10 +163,12 @@ namespace Raytracer.Rendering
         {
             Scene.UpdateVisibleObjects(Camera);
 
-            Bitmap result = new Bitmap(_screenResolutionX, _screenResolutionY, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            RenderTarget result = new RenderTarget(_screenResolutionX, _screenResolutionY);
 
-            Rectangle rect = new Rectangle(0, 0, result.Width, result.Height);
-            System.Drawing.Imaging.BitmapData bmpData = result.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly, result.PixelFormat);
+            //Bitmap result = new Bitmap(_screenResolutionX, _screenResolutionY, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+            Rectangle rect = new Rectangle(0, 0, result.ColorBuffer.Bitmap.Width, result.ColorBuffer.Bitmap.Height);
+            System.Drawing.Imaging.BitmapData bmpData = result.ColorBuffer.Bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly, result.ColorBuffer.Bitmap.PixelFormat);
 
             byte* scan0 = (byte*)bmpData.Scan0.ToPointer();
 
@@ -180,7 +183,8 @@ namespace Raytracer.Rendering
                     Y = y,
                     Camera = Camera,
                     Scene = Scene,
-                    ScanLine = scanLine
+                    ScanLine = scanLine,
+                    DepthBuffer = result.DepthBuffer
                 };
 
                 if (_renderDOF)
@@ -195,7 +199,7 @@ namespace Raytracer.Rendering
                 RenderProgress?.Invoke((float)y / (float)_screenResolutionY);
             }
 
-            result.UnlockBits(bmpData);
+            result.ColorBuffer.Bitmap.UnlockBits(bmpData);
 
             RenderComplete?.Invoke(result);
         }

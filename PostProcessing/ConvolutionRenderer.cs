@@ -127,6 +127,8 @@ namespace Raytracer.PostProcessing
                 {
                     //result += (new Color3f(bitmap.GetPixel(xx, yy))) * kernel[kernelY, kernelX];
 
+                    // TODO: because pixels outside of image are not calculated not all kernel elements are used and therefore the sum of factors != 1.0
+                    // make kernel factors dependend on how much overlap
                     result += (new Color3f(scan0 + yy * bitmapData.Stride + xx * 3)) * kernel[kernelY, kernelX];
 
                     kernelX++;

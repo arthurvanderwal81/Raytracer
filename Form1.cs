@@ -11,21 +11,26 @@ using Raytracer.Textures;
 using Raytracer.Materials;
 using Raytracer.Objects.GLB;
 using Raytracer.PostProcessing;
+using Raytracer.Rendering;
+using Raytracer.Image;
 
 namespace Raytracer
 {
     public partial class Form1 : Form
     {
         private Bitmap _raytracerOutput = null;
+        private RenderTarget _raytracerResult = null;
+        private Animation _animation = new Animation();
 
         public Form1()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
 
             MouseDown += Form1MouseDown;
 
-            PixelateRenderer pixelate = new PixelateRenderer(@"..\..\Data\Textures\10531.people.jpg", new Rectangle(235, 87, 50, 50), new Size(5, 5));
-            _raytracerOutput = pixelate.Render();
+            //PixelateRenderer pixelate = new PixelateRenderer(@"..\..\Data\Textures\10531.people.jpg", new Rectangle(235, 87, 50, 50), new Size(5, 5));
+            //_raytracerOutput = pixelate.Render();
 
             //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\fp695.png", 21, 20);
             //RadialBlurRenderer radialBlurRenderer = new RadialBlurRenderer(@"..\..\Data\Textures\IMG_20200618_191644.jpg", 21, 20);            
@@ -35,7 +40,7 @@ namespace Raytracer
 
             //BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(@"..\..\Data\Textures\fp695.png", 5);
             //_raytracerOutput = boxBlurRenderer.Render();
-            /*
+            
             // TODO:
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Create inverse cube object
@@ -53,7 +58,7 @@ namespace Raytracer
 
             this.ClientSize = new Size(renderResultWidth, renderResultHeight + progressBar1.Height);
             Rendering.Raytracer raytracer = new Rendering.Raytracer(renderResultWidth, renderResultHeight, false);
-            raytracer.Camera.FocalLength = 1.5;
+            //raytracer.Camera.FocalLength = 1.5;
 
             //Raytracer raytracer = new Raytracer(this.ClientSize, false);
             //Rendering.Raytracer raytracer = new Rendering.Raytracer(1024, 768, false);
@@ -136,7 +141,7 @@ namespace Raytracer
             raytracer.Scene.Objects.AddRange(gblFileData.Meshes[0].GetTriangleObjects(0));
 
             raytracer.Scene.Lights.Add(new PointLight(new Color3f(1f, 1f, 1f), new Vector3d(49d, 49d, 49d)));
-            *//*
+            */
 
             //raytracer.Scene.Objects.Add(new SphereObject("SPHERE_RIGHT",    new Vector3d(10f, 2f, 3f), 1f, woodMaterial));
             raytracer.Scene.Objects.Add(new SphereObject("SPHERE_MIDDLE",   new Vector3d(10f, 2f, 0f), 1f, reflectiveMaterial));
@@ -182,7 +187,7 @@ namespace Raytracer
             raytracer.RenderComplete = new Rendering.Raytracer.RenderCompleteDelegate(RaytracerRenderComplete);
 
             Thread thread = new Thread(raytracer.Render);
-            thread.Start();*/
+            thread.Start();
         }
 
         private void RaytracerProgressUpdate(float progress)
@@ -199,9 +204,10 @@ namespace Raytracer
             }
         }
 
-        private void RaytracerRenderComplete(Bitmap result)
+        private void RaytracerRenderComplete(RenderTarget result)
         {
-            _raytracerOutput = result;
+            _raytracerResult = result;
+            _raytracerOutput = result.ColorBuffer.Bitmap; //result.DepthBuffer.ToBitmap();//
             _raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
 
             //AntiAliasingRenderer antiAliasingRenderer = new AntiAliasingRenderer(_raytracerOutput);
@@ -215,11 +221,72 @@ namespace Raytracer
             {
                 this.Invoke(new Action(Refresh));
             }
+
+            //DepthBlurRenderer depthBlurRenderer = new DepthBlurRenderer(result, 1.7, 1.9, 17);
+            DepthBlurRenderer depthBlurRenderer = new DepthBlurRenderer(result, 1.4, 1.6, 9);
+            _raytracerOutput = depthBlurRenderer.Render();
+            _raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
+
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(Refresh));
+            }
+
+            /*
+            Bitmap blurResult = result.ColorBuffer.Bitmap;
+
+            _animation.ImageStack.Bitmaps.Add(blurResult);
+
+            for (int i = 0; i < 200; i++)
+            {
+                BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(blurResult, 5);
+                blurResult = boxBlurRenderer.Render();
+
+                _animation.ImageStack.Bitmaps.Add(blurResult);
+            }
+
+            _animation.FrameUpdate += new Animation.FrameUpdateDelegate(AnimationFrameUpdate);
+            _animation.Start(10);
+            */
+        }
+
+        private void AnimationFrameUpdate(Bitmap frame)
+        {
+            _raytracerOutput = frame;
+            Invalidate();
         }
 
         private void Form1MouseDown(object sender, MouseEventArgs e)
         {
-            MessageBox.Show(string.Format("{0}, {1}", e.X, e.Y));
+            if (e.Button == MouseButtons.Left)
+            {
+                PixelateRenderer pixelate = new PixelateRenderer(_raytracerOutput, new Rectangle(System.Math.Max(0, e.X - 25), System.Math.Max(0, e.Y - 25), 50, 50), new Size(5, 5));
+                _raytracerOutput = pixelate.Render();
+
+                Invalidate();
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                string data;
+
+                if (_raytracerResult != null)
+                {
+                    Color color = _raytracerResult.ColorBuffer.Bitmap.GetPixel(e.X, e.Y);
+                    data = string.Format("Color: {0}, {1}, {2}\r\nDepth: {3}\r\n({4}, {5})", color.R, color.G, color.B, _raytracerResult.DepthBuffer[e.Y, e.X], e.X, e.Y);
+                }
+                else
+                {
+                    data = string.Format("({0}, {1})", e.X, e.Y);
+                }
+                MessageBox.Show(data);
+            }
+            else
+            {
+                BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(_raytracerOutput, 5);
+                _raytracerOutput = boxBlurRenderer.Render();
+
+                Invalidate();
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)

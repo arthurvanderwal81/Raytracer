@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Image\Animation.cs" />
+    <Compile Include="Image\ImageStack.cs" />
     <Compile Include="Objects\GLB\GLBAccessor.cs" />
     <Compile Include="Objects\GLB\GLBAttributes.cs" />
     <Compile Include="Objects\GLB\GLBBufferView.cs" />
@@ -67,15 +69,19 @@
     <Compile Include="Objects\QuadObject.cs" />
     <Compile Include="PostProcessing\BoxBlurRenderer.cs" />
     <Compile Include="PostProcessing\ConvolutionRenderer.cs" />
+    <Compile Include="PostProcessing\DepthBlurRenderer.cs" />
     <Compile Include="PostProcessing\PixelateRenderer.cs" />
     <Compile Include="PostProcessing\RadialBlurRenderer.cs" />
     <Compile Include="PostProcessing\AntiAliasingRenderer.cs" />
     <Compile Include="Rendering\AverageColor.cs" />
     <Compile Include="Rendering\AverageColorBitmap.cs" />
+    <Compile Include="Rendering\ColorBuffer.cs" />
+    <Compile Include="Rendering\DepthBuffer.cs" />
     <Compile Include="Rendering\Intersection\CubeIntersectionResult.cs" />
     <Compile Include="Rendering\Intersection\IIntersectionResult.cs" />
     <Compile Include="Rendering\Intersection\MeshIntersectionResult.cs" />
     <Compile Include="Rendering\Intersection\QuadIntersectionResult.cs" />
+    <Compile Include="Rendering\RenderTarget.cs" />
     <Compile Include="Textures\BitmapTexture.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Textures\CheckerTexture.cs" />
