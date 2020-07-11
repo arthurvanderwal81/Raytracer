@@ -71,6 +71,9 @@
     <Compile Include="PostProcessing\BoxBlurRenderer.cs" />
     <Compile Include="PostProcessing\ConvolutionRenderer.cs" />
     <Compile Include="PostProcessing\DepthBlurRenderer.cs" />
+    <Compile Include="PostProcessing\Kernels\AverageKernel.cs" />
+    <Compile Include="PostProcessing\Kernels\Kernel.cs" />
+    <Compile Include="PostProcessing\Kernels\KernelResult.cs" />
     <Compile Include="PostProcessing\MaskBlurRenderer.cs" />
     <Compile Include="PostProcessing\PixelateRenderer.cs" />
     <Compile Include="PostProcessing\RadialBlurRenderer.cs" />

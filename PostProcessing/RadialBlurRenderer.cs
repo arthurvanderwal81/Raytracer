@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
 
 using Raytracer.Math;
+using Raytracer.PostProcessing.Kernels;
 
 namespace Raytracer.PostProcessing
 {
+    // TODO: rewrite to not use convolutionrenderer
     public class RadialBlurRenderer : ConvolutionRenderer
     {
         private float _nonBlurRadius;

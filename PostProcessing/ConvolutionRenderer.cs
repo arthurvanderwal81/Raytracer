@@ -1,5 +1,8 @@
-﻿using Raytracer.Math;
+﻿using System;
 using System.Drawing;
+
+using Raytracer.Math;
+using Raytracer.PostProcessing.Kernels;
 
 namespace Raytracer.PostProcessing
 {
@@ -8,83 +11,9 @@ namespace Raytracer.PostProcessing
     //https://gaming.stackexchange.com/questions/306721/what-is-radial-blur
     //https://www.photoshopessentials.com/photo-effects/radial-blur-action-effect-photoshop/
     //https://www.imgonline.com.ua/eng/blur-radial.php
+    [Obsolete]
     public class ConvolutionRenderer
     {
-        public class Kernel
-        {
-            public int Size { get; set; }
-            public int HalfSize { get; set; }
-
-            private float[,] _values;
-
-            public Kernel(int size)
-            {
-                Size = size;
-                HalfSize = (Size - 1) / 2;
-
-                _values = new float[size, size];
-            }
-
-            public float this[int y, int x]
-            {
-                get
-                {
-                    return _values[y, x];
-                }
-                set
-                {
-                    _values[y, x] = value;
-                }
-            }
-
-            public float this[Vector2d p]
-            {
-                get
-                {
-                    return _values[ScalarHelpers.Round(p.Y), ScalarHelpers.Round(p.X)];
-                }
-                set
-                {
-                    _values[ScalarHelpers.Round(p.Y), ScalarHelpers.Round(p.X)] = value;
-                }
-            }
-
-            public Vector2d GetCenter()
-            {
-                return new Vector2d((Size + 1) * 0.5, (Size + 1) * 0.5);
-            }
-
-            public bool ValidateSum(float sum)
-            {
-                float kernelSum = 0.0f;
-
-                for (int y = 0; y < Size; y++)
-                {
-                    for (int x = 0; x < Size; x++)
-                    {
-                        kernelSum += this[y, x];
-                    }
-                }
-
-                return kernelSum == sum;
-            }
-
-            public static Kernel operator /(Kernel k, float f)
-            {
-                Kernel result = new Kernel(k.Size);
-
-                for (int y = 0; y < k.Size; y++)
-                {
-                    for (int x = 0; x < k.Size; x++)
-                    {
-                        result[y, x] = k[y, x] / f;
-                    }
-                }
-
-                return result;
-            }
-        }
-
         protected Bitmap _bitmap;
         protected Kernel _kernel;
         
