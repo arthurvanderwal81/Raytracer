@@ -13,6 +13,7 @@ using Raytracer.Objects.GLB;
 using Raytracer.PostProcessing;
 using Raytracer.Rendering;
 using Raytracer.Image;
+using raytracer.PostProcessing;
 
 namespace Raytracer
 {
@@ -29,6 +30,27 @@ namespace Raytracer
 
             MouseDown += Form1MouseDown;
 
+            //MaskBlurRenderer maskBlurRenderer = new MaskBlurRenderer(new Bitmap(@"..\..\Data\Images\IMG_20200711_112706_small.jpg"), new Bitmap(@"..\..\Data\Images\IMG_20200711_112706__mask2_mono_small.bmp"), 17);
+            //_raytracerOutput = maskBlurRenderer.Render();
+            //_raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
+            /*
+            _raytracerOutput = new Bitmap(@"..\..\Data\Images\IMG_20200711_112706_small.jpg");
+
+            _animation.Bounce = true;
+            _animation.ImageStack.Bitmaps.Add(_raytracerOutput);
+
+            for (int i = 3; i <= 17; i += 2)
+            {
+                MaskBlurRenderer maskBlurRenderer = new MaskBlurRenderer(new Bitmap(@"..\..\Data\Images\IMG_20200711_112706_small.jpg"), new Bitmap(@"..\..\Data\Images\IMG_20200711_112706__mask2_mono_small.bmp"), i);
+                _raytracerOutput = maskBlurRenderer.Render();
+                _raytracerOutput.Save(string.Format(@"..\..\Data\Results\{0}.bmp", Environment.TickCount));
+
+                _animation.ImageStack.Bitmaps.Add(_raytracerOutput);
+            }
+
+            _animation.FrameUpdate += new Animation.FrameUpdateDelegate(AnimationFrameUpdate);
+            _animation.Start(200);*/
+
             //PixelateRenderer pixelate = new PixelateRenderer(@"..\..\Data\Textures\10531.people.jpg", new Rectangle(235, 87, 50, 50), new Size(5, 5));
             //_raytracerOutput = pixelate.Render();
 
@@ -40,7 +62,7 @@ namespace Raytracer
 
             //BoxBlurRenderer boxBlurRenderer = new BoxBlurRenderer(@"..\..\Data\Textures\fp695.png", 5);
             //_raytracerOutput = boxBlurRenderer.Render();
-            
+
             // TODO:
             // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
             // Create inverse cube object

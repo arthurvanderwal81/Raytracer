@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Image\Animation.cs" />
     <Compile Include="Image\ImageStack.cs" />
+    <Compile Include="Math\AverageColor3b.cs" />
     <Compile Include="Objects\GLB\GLBAccessor.cs" />
     <Compile Include="Objects\GLB\GLBAttributes.cs" />
     <Compile Include="Objects\GLB\GLBBufferView.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="PostProcessing\BoxBlurRenderer.cs" />
     <Compile Include="PostProcessing\ConvolutionRenderer.cs" />
     <Compile Include="PostProcessing\DepthBlurRenderer.cs" />
+    <Compile Include="PostProcessing\MaskBlurRenderer.cs" />
     <Compile Include="PostProcessing\PixelateRenderer.cs" />
     <Compile Include="PostProcessing\RadialBlurRenderer.cs" />
     <Compile Include="PostProcessing\AntiAliasingRenderer.cs" />
