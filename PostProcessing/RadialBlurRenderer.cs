@@ -11,15 +11,16 @@ namespace Raytracer.PostProcessing
         private float _nonBlurRadius;
         private Vector2d _bitmapCenter;
 
-        public RadialBlurRenderer(Bitmap bitmap) : base(bitmap)
-        {
-            _bitmapCenter = new Vector2d(bitmap.Width / 2.0f, bitmap.Height / 2.0f);
-        }
-
-        public RadialBlurRenderer(string filename, int kernelSize, int nonBlurRadius) : this(new Bitmap(filename))
+        public RadialBlurRenderer(Bitmap bitmap, int kernelSize, int nonBlurRadius) : base(bitmap)
         {
             _kernel = new Kernel(kernelSize);
             _nonBlurRadius = nonBlurRadius;
+
+            _bitmapCenter = new Vector2d(bitmap.Width / 2.0f, bitmap.Height / 2.0f);
+        }
+
+        public RadialBlurRenderer(string filename, int kernelSize, int nonBlurRadius) : this(new Bitmap(filename), kernelSize, nonBlurRadius)
+        {
         }
 
         private void CalculateKernel(int x, int y)

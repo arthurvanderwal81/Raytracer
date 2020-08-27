@@ -6,7 +6,7 @@ namespace Raytracer.Image
 {
     public class Animation
     {
-        public delegate void FrameUpdateDelegate(Bitmap frame);
+        public delegate void FrameUpdateDelegate(int frameNumber, Bitmap frame);
         public delegate void AnimationStopDelegate();
 
         public FrameUpdateDelegate FrameUpdate;
@@ -89,7 +89,7 @@ namespace Raytracer.Image
             }
             */
 
-            FrameUpdate?.Invoke(CurrentImage);
+            FrameUpdate?.Invoke(CurrentImageIndex, CurrentImage);
         }
 
         public void Stop()
