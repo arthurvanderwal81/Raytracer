@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 
 using Raytracer.Math;
+using Raytracer.PostProcessing.Kernels;
 using Raytracer.Rendering;
 
 namespace Raytracer.PostProcessing
@@ -10,23 +11,25 @@ namespace Raytracer.PostProcessing
     public class DepthBlurRenderer
     {
         private RenderTarget _renderTarget;
+        private double _focalLength;
         private double _focalLengthMin;
         private double _focalLengthMax;
-        private int _kernelSize;
-        private int _halfKernelSize;
+        private int _maxKernelSize;
+        //private int _halfKernelSize;
 
-        public DepthBlurRenderer(RenderTarget renderTarget, double focalLengthMin, double focalLengthMax, int kernelSize = 9)
+        public DepthBlurRenderer(RenderTarget renderTarget, double focalLengthMin, double focalLengthMax, int maxKernelSize = 21)
         {
-            if ((kernelSize % 2) != 1)
+            if ((maxKernelSize % 2) != 1)
             {
                 throw new ArgumentException("Kernelsize has to be an odd number");
             }
 
             _renderTarget = renderTarget;
+            _focalLength = (focalLengthMin + focalLengthMax) / 2;
             _focalLengthMin = focalLengthMin;
             _focalLengthMax = focalLengthMax;
-            _kernelSize = kernelSize;
-            _halfKernelSize = (_kernelSize - 1) / 2;
+            _maxKernelSize = maxKernelSize;
+            //_halfKernelSize = (_kernelSize - 1) / 2;
         }
 
         public unsafe Bitmap Render()
@@ -65,7 +68,23 @@ namespace Raytracer.PostProcessing
                     {
                         AverageColor3b color = new AverageColor3b();
 
-                        Rectangle kernelRectangle = new Rectangle(x - _halfKernelSize, y - _halfKernelSize, _kernelSize, _kernelSize);
+                        int kernelSize = (int)(ScalarHelpers.Saturate(System.Math.Abs(pixelDepth - _focalLength) / 8.0) * _maxKernelSize);
+
+                        if ((kernelSize % 2) == 0)
+                        {
+                            if (kernelSize > 0)
+                            {
+                                kernelSize = kernelSize - 1;
+                            }
+                            else
+                            {
+                                kernelSize = 1;
+                            }
+                        }
+
+                        int halfKernelSize = (kernelSize - 1) / 2;
+
+                        Rectangle kernelRectangle = new Rectangle(x - halfKernelSize, y - halfKernelSize, kernelSize, kernelSize);
                         Rectangle intersection = Rectangle.Intersect(imageRectangle, kernelRectangle);
 
                         for (int yy = intersection.Y; yy < intersection.Bottom; yy++)
